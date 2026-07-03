@@ -1,12 +1,13 @@
 const taskService = require("../services/taskService");
+const asyncHandler = require("../middleware/asyncHandler")
 
-exports.getTasks = async (req, res) => {
+exports.getTasks = asyncHandler(async (req, res) => {
     const tasks = await taskService.getAllTasks();
 
     res.status(200).json(tasks);
-};
+});
 
-exports.addTask = async (req, res) => {
+exports.addTask = asyncHandler(async (req, res) => {
     const { title, projectId, assigneeId } = req.body;
 
     if (!title || !projectId || !assigneeId) {
@@ -18,21 +19,21 @@ exports.addTask = async (req, res) => {
     const task = await taskService.createTask({title, projectId, assigneeId})
 
     res.status(201).json(task);
-};
+});
 
-exports.getSingleTask = async (req, res) => {
+exports.getSingleTask = asyncHandler(async (req, res) => {
     const task = await taskService.getTaskById(req.id);
 
     if (!task) {
-        return res.status(404).json({
-            message: "Task not found"
-        });
-    }
+    return res.status(404).json({
+        message: "Task not found"
+    })
+}
 
     res.status(200).json(task);
-};
+});
 
-exports.updateTask = async (req, res) => {
+exports.updateTask = asyncHandler(async (req, res) => {
     const {title, completed} = req.body;
 
     if (title === undefined && completed === undefined) {
@@ -40,24 +41,19 @@ exports.updateTask = async (req, res) => {
             message: "Provide at least one field to update."
         })
     }
-    const task = await taskService.updateTask(req.id, {title, completed})
 
-    if (!task) {
-        return res.status(404).json({
-            message: "Task not found"
-        })
-    }
+     const updates = {};
+
+    if (title !== undefined) updates.title = title;
+    if (completed !== undefined) updates.completed = completed;
+
+    const task = await taskService.updateTask(req.id, updates)
+
     res.status(200).json(task);
-};
+});
 
-exports.deleteTask = async (req, res) => {
-    const deletedTask = await taskService.deleteTask(req.id);
-
-    if (!deletedTask) {
-        return res.status(404).json({
-            message: "Task not found."
-        })
-    }
+exports.deleteTask = asyncHandler(async (req, res) => {
+    await taskService.deleteTask(req.id);
 
     res.status(204).send()
-};
+});

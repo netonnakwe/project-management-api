@@ -1,13 +1,14 @@
 const projectService = require("../services/projectService")
 const PROJECT_STATUS = require("../constants/projectStatus")
 const validStatuses = Object.values(PROJECT_STATUS);
+const asyncHandler = require("../middleware/asyncHandler")
 
-exports.getProjects = async (req, res) => {
+exports.getProjects = asyncHandler(async (req, res) => {
     const projects = await projectService.getAllProjects();
     res.status(200).json(projects);
-};
+});
 
-exports.getSingleProject = async (req, res) => {
+exports.getSingleProject = asyncHandler(async (req, res) => {
 
     const project = await projectService.getProjectById(req.id);
 
@@ -18,22 +19,15 @@ exports.getSingleProject = async (req, res) => {
     }
 
     res.status(200).json(project);
-};
+});
 
-exports.updateProject = async (req, res) => {
+exports.updateProject = asyncHandler(async (req, res) => {
     const project = await projectService.updateProject(req.id, req.body);
 
-    if (!project) {
-        return res.status(404).json({
-            message: "Project not found"
-        });
-    }
-
-
     res.status(200).json(project);
-};
+});
 
-exports.addProject = async (req, res) => {
+exports.addProject = asyncHandler(async (req, res) => {
     const {name, description, status, ownerId} = req.body;
 
     if (!name || !description || !ownerId) {
@@ -51,18 +45,10 @@ exports.addProject = async (req, res) => {
     const project = await projectService.createProject({name, description, status: status ?? PROJECT_STATUS.IN_PROGRESS, ownerId})
 
     res.status(201).json(project);
-};
+});
 
-exports.deleteProject = async (req, res) => {
-    const isDeleted = await projectService.deleteProject(req.id);
-
-    if (!isDeleted) {
-        return res.status(404).json({
-            message: "Project not found"
-        });
-    }
-
-    
+exports.deleteProject = asyncHandler(async (req, res) => {
+    await projectService.deleteProject(req.id);
 
     res.status(204).send()
-};
+});
