@@ -9,9 +9,9 @@ exports.getTasks = async (req, res) => {
 exports.addTask = async (req, res) => {
     const { title, projectId, assigneeId } = req.body;
 
-    if (!title) {
+    if (!title || !projectId || !assigneeId) {
         return res.status(400).json({
-            message: "Please provide a title for this task."
+            message: "title, projectId and assigneeId are required."
         })
     }
 
@@ -20,8 +20,8 @@ exports.addTask = async (req, res) => {
     res.status(201).json(task);
 };
 
-exports.getSingleTask = (req, res) => {
-    const task = taskService.getTaskById(req.id);
+exports.getSingleTask = async (req, res) => {
+    const task = await taskService.getTaskById(req.id);
 
     if (!task) {
         return res.status(404).json({
@@ -32,8 +32,15 @@ exports.getSingleTask = (req, res) => {
     res.status(200).json(task);
 };
 
-exports.updateTask = (req, res) => {
-    const task = taskService.updateTask(req.id, req.body)
+exports.updateTask = async (req, res) => {
+    const {title, completed} = req.body;
+
+    if (title === undefined && completed === undefined) {
+        return res.status(400).json({
+            message: "Provide at least one field to update."
+        })
+    }
+    const task = await taskService.updateTask(req.id, {title, completed})
 
     if (!task) {
         return res.status(404).json({
@@ -43,10 +50,10 @@ exports.updateTask = (req, res) => {
     res.status(200).json(task);
 };
 
-exports.deleteTask = (req, res) => {
-    const isDeleted = taskService.deleteTask(req.id);
+exports.deleteTask = async (req, res) => {
+    const deletedTask = await taskService.deleteTask(req.id);
 
-    if (!isDeleted) {
+    if (!deletedTask) {
         return res.status(404).json({
             message: "Task not found."
         })

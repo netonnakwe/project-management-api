@@ -1,13 +1,15 @@
 const projectService = require("../services/projectService")
+const PROJECT_STATUS = require("../constants/projectStatus")
+const validStatuses = Object.values(PROJECT_STATUS);
 
-exports.getProjects = (req, res) => {
-    const projects = projectService.getAllProjects();
+exports.getProjects = async (req, res) => {
+    const projects = await projectService.getAllProjects();
     res.status(200).json(projects);
 };
 
-exports.getSingleProject = (req, res) => {
+exports.getSingleProject = async (req, res) => {
 
-    const project = projectService.getProjectById(req.id);
+    const project = await projectService.getProjectById(req.id);
 
     if (!project) {
         return res.status(404).json({
@@ -18,8 +20,8 @@ exports.getSingleProject = (req, res) => {
     res.status(200).json(project);
 };
 
-exports.updateProject = (req, res) => {
-    const project = projectService.updateProject(req.id, req.body);
+exports.updateProject = async (req, res) => {
+    const project = await projectService.updateProject(req.id, req.body);
 
     if (!project) {
         return res.status(404).json({
@@ -31,22 +33,28 @@ exports.updateProject = (req, res) => {
     res.status(200).json(project);
 };
 
-exports.addProject = (req, res) => {
-    const {name, description, owner, members} = req.body;
+exports.addProject = async (req, res) => {
+    const {name, description, status, ownerId} = req.body;
 
-    if (!name || !description || !owner) {
+    if (!name || !description || !ownerId) {
         return res.status(400).json({
-            message: "Missing required fields: name, description, owner."
+            message: "Missing required fields: name, description, ownerId."
         });
     }
 
-    const project = projectService.createProject({name, description, owner, members})
+    if (status && !validStatuses.includes(status)) {
+        return res.status(400).json({
+            message: "Invalid project status."
+        })
+    }
+
+    const project = await projectService.createProject({name, description, status: status ?? PROJECT_STATUS.IN_PROGRESS, ownerId})
 
     res.status(201).json(project);
 };
 
-exports.deleteProject = (req, res) => {
-    const isDeleted = projectService.deleteProject(req.id);
+exports.deleteProject = async (req, res) => {
+    const isDeleted = await projectService.deleteProject(req.id);
 
     if (!isDeleted) {
         return res.status(404).json({
