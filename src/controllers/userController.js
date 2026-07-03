@@ -7,15 +7,7 @@ exports.getUsers = asyncHandler(async (req, res) => {
 })
 
 exports.addUser = asyncHandler(async (req, res) => {
-    const { firstName, lastName, email, role } = req.body;
-
-    if (!firstName || !lastName || !email || !role) {
-        return res.status(400).json({
-            message: "All fields are required."
-        });
-    }
-
-    const user = await userService.createUser({ firstName, lastName, email, role })
+    const user = await userService.createUser(req.body)
 
     res.status(201).json(user);
 })

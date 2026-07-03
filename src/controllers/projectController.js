@@ -1,6 +1,5 @@
 const projectService = require("../services/projectService")
 const PROJECT_STATUS = require("../constants/projectStatus")
-const validStatuses = Object.values(PROJECT_STATUS);
 const asyncHandler = require("../middleware/asyncHandler")
 
 exports.getProjects = asyncHandler(async (req, res) => {
@@ -28,21 +27,9 @@ exports.updateProject = asyncHandler(async (req, res) => {
 });
 
 exports.addProject = asyncHandler(async (req, res) => {
-    const {name, description, status, ownerId} = req.body;
-
-    if (!name || !description || !ownerId) {
-        return res.status(400).json({
-            message: "Missing required fields: name, description, ownerId."
-        });
-    }
-
-    if (status && !validStatuses.includes(status)) {
-        return res.status(400).json({
-            message: "Invalid project status."
-        })
-    }
-
-    const project = await projectService.createProject({name, description, status: status ?? PROJECT_STATUS.IN_PROGRESS, ownerId})
+    const project = await projectService.createProject({
+        ...req.body, status: req.body.status ?? PROJECT_STATUS.IN_PROGRESS
+    });
 
     res.status(201).json(project);
 });

@@ -8,15 +8,7 @@ exports.getTasks = asyncHandler(async (req, res) => {
 });
 
 exports.addTask = asyncHandler(async (req, res) => {
-    const { title, projectId, assigneeId } = req.body;
-
-    if (!title || !projectId || !assigneeId) {
-        return res.status(400).json({
-            message: "title, projectId and assigneeId are required."
-        })
-    }
-
-    const task = await taskService.createTask({title, projectId, assigneeId})
+    const task = await taskService.createTask(req.body)
 
     res.status(201).json(task);
 });
@@ -34,20 +26,7 @@ exports.getSingleTask = asyncHandler(async (req, res) => {
 });
 
 exports.updateTask = asyncHandler(async (req, res) => {
-    const {title, completed} = req.body;
-
-    if (title === undefined && completed === undefined) {
-        return res.status(400).json({
-            message: "Provide at least one field to update."
-        })
-    }
-
-     const updates = {};
-
-    if (title !== undefined) updates.title = title;
-    if (completed !== undefined) updates.completed = completed;
-
-    const task = await taskService.updateTask(req.id, updates)
+    const task = await taskService.updateTask(req.id, req.body)
 
     res.status(200).json(task);
 });
