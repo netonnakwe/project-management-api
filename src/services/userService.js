@@ -17,13 +17,6 @@ exports.getUserById = async (id) => {
     });
 }
 
-exports.createUser = async (data) => {
-    return prisma.user.create({
-        data,
-        select: userSelect
-    });
-}
-
 exports.updateUser = async (id, updates) => {
     return prisma.user.update({
         where: {id},

@@ -6,12 +6,6 @@ exports.getUsers = asyncHandler(async (req, res) => {
     res.status(200).json(users);
 })
 
-exports.addUser = asyncHandler(async (req, res) => {
-    const user = await userService.createUser(req.body)
-
-    res.status(201).json(user);
-})
-
 exports.getSingleUser = asyncHandler(async (req, res) => {
     const user = await userService.getUserById(req.id);
 

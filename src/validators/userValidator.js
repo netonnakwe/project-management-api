@@ -8,13 +8,6 @@ const userSchema = z.object({
     isActive: z.boolean()
 });
 
-const createUserSchema = userSchema.pick({
-    firstName: true,
-    lastName: true,
-    email: true,
-    role: true
-});
-
 const updateUserSchema = userSchema.pick({
     firstName: true,
     lastName: true,
@@ -31,6 +24,5 @@ const updateUserSchema = userSchema.pick({
 
 
 module.exports = {
-    createUserSchema,
     updateUserSchema
 };
