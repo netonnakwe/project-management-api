@@ -6,13 +6,18 @@ const taskController = require("../controllers/taskController");
 const validateId = require("../middleware/validateId")
 const validate = require("../middleware/validate")
 
-const {createTaskSchema, updateTaskSchema} = require("../validators/taskValidator")
+const {createTaskSchema, updateTaskSchema} = require("../validators/taskValidator");
+const protect = require("../middleware/protect");
+const authorize = require("../middleware/authorize");
+const ROLES = require("../constants/roles");
 
-router.get("/", taskController.getTasks);
-router.post("/", validate(createTaskSchema), taskController.addTask);
+router.use(protect);
 
-router.get("/:id", validateId, taskController.getSingleTask);
-router.put("/:id", validateId, validate(updateTaskSchema), taskController.updateTask);
-router.delete("/:id", validateId, taskController.deleteTask);
+router.get("/", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER, ROLES.DEVELOPER), taskController.getTasks);
+router.post("/", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER), validate(createTaskSchema), taskController.addTask);
+
+router.get("/:id", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER, ROLES.DEVELOPER), validateId, taskController.getSingleTask);
+router.patch("/:id", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER, ROLES.DEVELOPER), validateId, validate(updateTaskSchema), taskController.updateTask);
+router.delete("/:id", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER), validateId, taskController.deleteTask);
 
 module.exports = router;

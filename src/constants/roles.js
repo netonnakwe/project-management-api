@@ -1,0 +1,5 @@
+module.exports = {
+    ADMIN: "ADMIN",
+    PROJECT_MANAGER: "PROJECT_MANAGER",
+    DEVELOPER: "DEVELOPER"
+}

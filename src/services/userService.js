@@ -1,39 +1,40 @@
 const prisma = require("../lib/prisma")
+const userSelect = require("../constants/userSelect")
+const userWithRelationSelect = require("../constants/userWithRelationSelect")
+const projectSelect = require("../constants/projectSelect")
+const taskSelect = require("../constants/taskSelect")
 
 exports.getAllUsers = async () => {
     return prisma.user.findMany({
-        include: {
-            projects: true,
-            tasks: true
-        }
+        select: userSelect
     });
 }
 
 exports.getUserById = async (id) => {
     return prisma.user.findUnique({
         where: {id},
-        include: {
-            projects: true,
-            tasks: true
-        }
+        select: userWithRelationSelect
     });
 }
 
 exports.createUser = async (data) => {
     return prisma.user.create({
-        data
+        data,
+        select: userSelect
     });
 }
 
 exports.updateUser = async (id, updates) => {
     return prisma.user.update({
         where: {id},
-        data: updates
+        data: updates,
+        select: userSelect
     });
 }
 
 exports.deleteUser = async (id) => {
     return prisma.user.delete({
-        where: {id}
+        where: {id},
+        select: userSelect
     });
 }
