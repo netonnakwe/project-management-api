@@ -1,8 +1,7 @@
-module.exports = (schema) => {
+module.exports = (schema, source = "body") => {
     return (req, res, next) => {
 
-        console.log(req.body);
-        const result = schema.safeParse(req.body);
+        const result = schema.safeParse(req[source]);
 
         if (!result.success) {
             return res.status(400).json({
@@ -13,7 +12,8 @@ module.exports = (schema) => {
             })
         }
 
-        req.body = result.data;
+        req.validated = req.validated || {};
+        req.validated[source] = result.data;
 
         next();
     }

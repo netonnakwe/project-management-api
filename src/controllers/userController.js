@@ -2,8 +2,9 @@ const userService = require("../services/userService");
 const asyncHandler = require("../middleware/asyncHandler");
 
 exports.getUsers = asyncHandler(async (req, res) => {
-    const users = await userService.getAllUsers();
-    res.status(200).json(users);
+    const { page, limit } = req.validated.query;
+    const result = await userService.getAllUsers(page, limit);
+    res.status(200).json(result);
 })
 
 exports.getSingleUser = asyncHandler(async (req, res) => {

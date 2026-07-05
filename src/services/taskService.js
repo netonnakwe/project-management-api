@@ -1,9 +1,14 @@
 const projectSelect = require("../constants/projectSelect");
 const userSelect = require("../constants/userSelect");
-const prisma = require("../lib/prisma")
+const prisma = require("../lib/prisma");
+const { buildPagination } = require("../utils/pagination");
 
-exports.getAllTasks = async () => {
-    return prisma.task.findMany({
+exports.getAllTasks = async (page, limit) => {
+    const skip = (page - 1) * limit;
+    const [tasks, total] = await Promise.all([
+        prisma.task.findMany({
+        skip,
+        take: limit,
         include: {
             project: {
                 select: projectSelect
@@ -12,7 +17,14 @@ exports.getAllTasks = async () => {
                 select: userSelect
             }
         }
-    });
+    }), 
+    prisma.task.count()
+    ])
+
+    return {
+        data: tasks,
+        pagination: buildPagination(page, limit, total)
+    }
 }
 
 exports.getTaskById = async (id) => {

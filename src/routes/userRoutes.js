@@ -9,10 +9,11 @@ const validateId = require("../middleware/validateId")
 const {updateUserSchema} = require("../validators/userValidator");
 const validate = require("../middleware/validate")
 const ROLES = require("../constants/roles");
+const { paginationSchema } = require("../validators/paginationValidator");
 
 router.use(protect);
 
-router.get("/", authorize(ROLES.ADMIN), userController.getUsers);
+router.get("/", authorize(ROLES.ADMIN), validate(paginationSchema, "query"), userController.getUsers);
 
 router.get("/:id", authorize(ROLES.ADMIN), validateId, userController.getSingleUser);
 router.patch("/:id", authorize(ROLES.ADMIN), validateId, validate(updateUserSchema), userController.updateUser);

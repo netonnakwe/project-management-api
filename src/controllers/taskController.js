@@ -2,9 +2,12 @@ const taskService = require("../services/taskService");
 const asyncHandler = require("../middleware/asyncHandler")
 
 exports.getTasks = asyncHandler(async (req, res) => {
-    const tasks = await taskService.getAllTasks();
+    
+    const { page, limit } = req.validated.query;
 
-    res.status(200).json(tasks);
+    const result = await taskService.getAllTasks(page, limit);
+
+    res.status(200).json(result);
 });
 
 exports.addTask = asyncHandler(async (req, res) => {

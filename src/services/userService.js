@@ -3,19 +3,35 @@ const userSelect = require("../constants/userSelect")
 const userWithRelationSelect = require("../constants/userWithRelationSelect")
 const projectSelect = require("../constants/projectSelect")
 const taskSelect = require("../constants/taskSelect")
+const { buildPagination } = require("../utils/pagination")
 
-exports.getAllUsers = async () => {
-    return prisma.user.findMany({
-        where: {
-            isActive: true
-        },
-        select: userSelect
-    });
+exports.getAllUsers = async (page, limit) => {
+    const skip = (page - 1) * limit;
+
+    const [users, total] = await Promise.all([
+        prisma.user.findMany({
+            where: {
+                isActive: true
+            },
+            skip,
+            take: limit,
+            select: userSelect
+        }),
+        prisma.user.count({
+            where: {
+                isActive: true
+            }
+        })
+    ])
+    return {
+        data: users,
+        pagination: buildPagination(page, limit, total)
+    }
 }
 
 exports.getUserById = async (id) => {
     return prisma.user.findUnique({
-        where: {id},
+        where: { id },
         select: userWithRelationSelect
     });
 }
@@ -33,11 +49,11 @@ exports.updateUser = async (id, updates) => {
 
 exports.deactivateUser = async (id) => {
     return prisma.user.update({
-        where: {id},
+        where: { id },
         data: {
             isActive: false
         },
-        select: userSelect        
+        select: userSelect
     });
 }
 
