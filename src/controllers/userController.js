@@ -24,8 +24,17 @@ exports.updateUser = asyncHandler(async (req, res) => {
     res.status(200).json(user);
 })
 
-exports.deleteUser = asyncHandler(async (req, res) => {
-    await userService.deleteUser(req.id);
+exports.deactivateUser = asyncHandler(async (req, res) => {
+    await userService.deactivateUser(req.id);
 
     res.status(204).send()
+})
+
+exports.activateUser = asyncHandler(async (req, res) => {
+    const user = await userService.activateUser(req.id);
+
+    res.status(200).json({
+        message: "Account activated successfully.",
+        user
+    });
 })

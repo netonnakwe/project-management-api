@@ -16,6 +16,7 @@ router.get("/", authorize(ROLES.ADMIN), userController.getUsers);
 
 router.get("/:id", authorize(ROLES.ADMIN), validateId, userController.getSingleUser);
 router.patch("/:id", authorize(ROLES.ADMIN), validateId, validate(updateUserSchema), userController.updateUser);
-router.delete("/:id", authorize(ROLES.ADMIN), validateId, userController.deleteUser);
+router.patch("/:id/activate", authorize(ROLES.ADMIN), validateId, userController.activateUser);
+router.delete("/:id", authorize(ROLES.ADMIN), validateId, userController.deactivateUser);
 
 module.exports = router;

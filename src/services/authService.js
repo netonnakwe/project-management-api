@@ -37,8 +37,8 @@ exports.login = async (data) => {
         }
     });
 
-    if (!user) {
-        throw new Error("Invalid email or password.");
+    if (!user || !user.isActive) {
+        throw new AppError("Invalid email or password.", 401);
     }
 
     const passwordMatches = await bcrypt.compare(data.password, user.password);

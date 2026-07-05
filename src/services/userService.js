@@ -6,6 +6,9 @@ const taskSelect = require("../constants/taskSelect")
 
 exports.getAllUsers = async () => {
     return prisma.user.findMany({
+        where: {
+            isActive: true
+        },
         select: userSelect
     });
 }
@@ -19,15 +22,31 @@ exports.getUserById = async (id) => {
 
 exports.updateUser = async (id, updates) => {
     return prisma.user.update({
-        where: {id},
+        where: {
+            id,
+            isActive: true
+        },
         data: updates,
         select: userSelect
     });
 }
 
-exports.deleteUser = async (id) => {
-    return prisma.user.delete({
+exports.deactivateUser = async (id) => {
+    return prisma.user.update({
         where: {id},
+        data: {
+            isActive: false
+        },
+        select: userSelect        
+    });
+}
+
+exports.activateUser = async (id) => {
+    return prisma.user.update({
+        where: { id },
+        data: {
+            isActive: true
+        },
         select: userSelect
     });
 }

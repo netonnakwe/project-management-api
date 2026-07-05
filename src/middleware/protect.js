@@ -30,6 +30,12 @@ module.exports = async (req, res, next) => {
                 message: "Authentication required."
             })
         }
+
+        if (!user.isActive) {
+            return res.status(401).json({
+                message: "Your account has been deactivated. Please contact an admin."
+            })
+        }
         const { password, ...safeUser } = user;
         req.user = safeUser;
 
