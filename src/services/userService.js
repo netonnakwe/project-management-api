@@ -9,20 +9,37 @@ exports.getAllUsers = async ({
     page,
     limit,
     role,
-    isActive
+    isActive,
+    search
 }) => {
     const skip = (page - 1) * limit;
 
-    const where = {};
-
-if (role) {
-    where.role = role;
-}
-
-if (isActive !== undefined) {
-    where.isActive = isActive;
-}
-
+    const where = {
+    ...(role && { role }),
+    ...(isActive !== undefined && { isActive }),
+    ...(search && {
+        OR: [
+            {
+                firstName: {
+                    contains: search,
+                    mode: "insensitive"
+                }
+            },
+            {
+                lastName: {
+                    contains: search,
+                    mode: "insensitive"
+                }
+            },
+            {
+                email: {
+                    contains: search,
+                    mode: "insensitive"
+                }
+            }
+        ]
+    })
+};
     const [users, total] = await Promise.all([
         prisma.user.findMany({
             where,

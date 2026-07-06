@@ -8,7 +8,9 @@ const userQuerySchema = paginationSchema.extend({
     isActive: z
         .enum(["true", "false"])
         .transform(value => value === "true")
-        .optional()
+        .optional(),
+    
+    search: z.string().trim().min(1).optional()
 });
 
 module.exports = {

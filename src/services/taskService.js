@@ -8,13 +8,20 @@ exports.getAllTasks = async ({
     limit,
     completed,
     projectId,
-    assigneeId
+    assigneeId,
+    search
 }) => {
     const skip = (page - 1) * limit;
     const where = {
     ...(completed !== undefined && { completed }),
     ...(projectId && { projectId }),
-    ...(assigneeId && { assigneeId })
+    ...(assigneeId && { assigneeId }),
+    ...(search && {
+        title: {
+            contains: search,
+            mode: "insensitive"
+        }
+    })
 };
     const [tasks, total] = await Promise.all([
         console.log("where", where),

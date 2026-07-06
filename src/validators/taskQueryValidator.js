@@ -8,5 +8,7 @@ const taskQuerySchema = paginationSchema.extend({
         .optional(),
 
     projectId: z.coerce.number().int().positive().optional(),
-    assigneeId: z.coerce.number().int().positive().optional()
+    assigneeId: z.coerce.number().int().positive().optional(),
+
+    search: z.string().trim().min(1).optional()
 });

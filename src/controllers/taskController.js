@@ -2,22 +2,8 @@ const taskService = require("../services/taskService");
 const asyncHandler = require("../middleware/asyncHandler")
 
 exports.getTasks = asyncHandler(async (req, res) => {
-    
-    const {
-    page,
-    limit,
-    completed,
-    projectId,
-    assigneeId
-} = req.validated.query;
 
-const result = await taskService.getAllTasks({
-    page,
-    limit,
-    completed,
-    projectId,
-    assigneeId
-});
+const result = await taskService.getAllTasks(req.validated.query);
 
     res.status(200).json(result);
 });
