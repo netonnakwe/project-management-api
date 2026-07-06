@@ -5,10 +5,16 @@ const { buildPagination } = require("../utils/pagination");
 
 exports.getAllProjects = async (page, limit) => {
     const skip = (page - 1) * limit;
+    const where = {
+    ...(status && { status }),
+    ...(ownerId && { ownerId })
+};
+    
     const [projects, total] = await Promise.all([
         prisma.project.findMany({
             skip,
             take: limit,
+            where,
             include: {
                 owner: {
                     select: userSelect

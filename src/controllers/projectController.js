@@ -3,8 +3,7 @@ const PROJECT_STATUS = require("../constants/projectStatus")
 const asyncHandler = require("../middleware/asyncHandler")
 
 exports.getProjects = asyncHandler(async (req, res) => {
-    const { page, limit } = req.validated.query;
-    const result = await projectService.getAllProjects(page, limit);
+    const result = await projectService.getAllProjects(req.validated.query);
     res.status(200).json(result);
 });
 

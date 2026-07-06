@@ -11,10 +11,11 @@ const {createTaskSchema, updateTaskSchema} = require("../validators/taskValidato
 const protect = require("../middleware/protect");
 const authorize = require("../middleware/authorize");
 const ROLES = require("../constants/roles");
+const { taskQuerySchema } = require("../validators/taskQueryValidator");
 
 router.use(protect);
 
-router.get("/", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER, ROLES.DEVELOPER), validate(paginationSchema, "query"), taskController.getTasks);
+router.get("/", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER, ROLES.DEVELOPER), validate(taskQuerySchema, "query"), taskController.getTasks);
 router.post("/", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER), validate(createTaskSchema), taskController.addTask);
 
 router.get("/:id", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER, ROLES.DEVELOPER), validateId, taskController.getSingleTask);

@@ -9,11 +9,11 @@ const ROLES = require("../constants/roles")
 const validateId = require("../middleware/validateId")
 const {createProjectSchema, updateProjectSchema} = require("../validators/projectValidator")
 const validate = require("../middleware/validate");
-const { paginationSchema } = require("../validators/paginationValidator");
+const { projectQuerySchema } = require("../validators/projectQueryValidator");
 
 router.use(protect);
 
-router.get("/", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER, ROLES.DEVELOPER), validate(paginationSchema, "query"), projectController.getProjects);
+router.get("/", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER, ROLES.DEVELOPER), validate(projectQuerySchema, "query"), projectController.getProjects);
 router.post("/", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER), validate(createProjectSchema),  projectController.addProject);
 
 router.get("/:id", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER, ROLES.DEVELOPER), validateId, projectController.getSingleProject);

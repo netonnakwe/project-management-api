@@ -3,12 +3,25 @@ const userSelect = require("../constants/userSelect");
 const prisma = require("../lib/prisma");
 const { buildPagination } = require("../utils/pagination");
 
-exports.getAllTasks = async (page, limit) => {
+exports.getAllTasks = async ({
+    page,
+    limit,
+    completed,
+    projectId,
+    assigneeId
+}) => {
     const skip = (page - 1) * limit;
+    const where = {
+    ...(completed !== undefined && { completed }),
+    ...(projectId && { projectId }),
+    ...(assigneeId && { assigneeId })
+};
     const [tasks, total] = await Promise.all([
+        console.log("where", where),
         prisma.task.findMany({
         skip,
         take: limit,
+        where,
         include: {
             project: {
                 select: projectSelect
@@ -18,7 +31,9 @@ exports.getAllTasks = async (page, limit) => {
             }
         }
     }), 
-    prisma.task.count()
+    prisma.task.count({
+        where
+    })
     ])
 
     return {
