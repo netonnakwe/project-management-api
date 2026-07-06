@@ -10,7 +10,21 @@ const userQuerySchema = paginationSchema.extend({
         .transform(value => value === "true")
         .optional(),
     
-    search: z.string().trim().min(1).optional()
+    search: z.string().trim().min(1).optional(),
+
+    sortBy: z
+    .enum([
+        "firstName",
+        "lastName",
+        "email",
+        "role",
+        "createdAt"
+    ])
+    .default("createdAt"),
+
+order: z
+    .enum(["asc", "desc"])
+    .default("desc")
 });
 
 module.exports = {

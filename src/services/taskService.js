@@ -9,7 +9,9 @@ exports.getAllTasks = async ({
     completed,
     projectId,
     assigneeId,
-    search
+    search,
+    sortBy,
+    order
 }) => {
     const skip = (page - 1) * limit;
     const where = {
@@ -23,12 +25,15 @@ exports.getAllTasks = async ({
         }
     })
 };
+    const orderBy = {
+    [sortBy]: order
+};
     const [tasks, total] = await Promise.all([
-        console.log("where", where),
         prisma.task.findMany({
         skip,
         take: limit,
         where,
+        orderBy,
         include: {
             project: {
                 select: projectSelect

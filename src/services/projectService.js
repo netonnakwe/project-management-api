@@ -3,7 +3,15 @@ const userSelect = require("../constants/userSelect");
 const prisma = require("../lib/prisma");
 const { buildPagination } = require("../utils/pagination");
 
-exports.getAllProjects = async (page, limit) => {
+exports.getAllProjects = async ({
+    page,
+    limit,
+    status,
+    ownerId,
+    search,
+    sortBy,
+    order
+}) => {
     const skip = (page - 1) * limit;
     const where = {
     ...(status && { status }),
@@ -25,12 +33,17 @@ exports.getAllProjects = async (page, limit) => {
         ]
     })
 };
+
+    const orderBy = {
+    [sortBy]: order
+};
     
     const [projects, total] = await Promise.all([
         prisma.project.findMany({
             skip,
             take: limit,
             where,
+            orderBy,
             include: {
                 owner: {
                     select: userSelect

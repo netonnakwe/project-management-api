@@ -10,5 +10,22 @@ const taskQuerySchema = paginationSchema.extend({
     projectId: z.coerce.number().int().positive().optional(),
     assigneeId: z.coerce.number().int().positive().optional(),
 
-    search: z.string().trim().min(1).optional()
+    search: z.string().trim().min(1).optional(),
+
+    sortBy: z
+    .enum([
+        "title",
+        "completed",
+        "createdAt",
+        "updatedAt"
+    ])
+    .default("createdAt"),
+
+order: z
+    .enum(["asc", "desc"])
+    .default("desc")
 });
+
+module.exports = {
+    taskQuerySchema
+};

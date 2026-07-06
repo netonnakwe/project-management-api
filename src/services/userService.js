@@ -10,9 +10,15 @@ exports.getAllUsers = async ({
     limit,
     role,
     isActive,
-    search
+    search,
+    sortBy,
+    order
 }) => {
     const skip = (page - 1) * limit;
+
+    const orderBy = {
+    [sortBy]: order
+};
 
     const where = {
     ...(role && { role }),
@@ -45,6 +51,7 @@ exports.getAllUsers = async ({
             where,
             skip,
             take: limit,
+            orderBy,
             select: userSelect
         }),
         prisma.user.count({
