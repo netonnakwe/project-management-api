@@ -1,9 +1,12 @@
+const projectSelect = require("../constants/projectSelect");
 const taskSelect = require("../constants/taskSelect");
 const userSelect = require("../constants/userSelect");
 const prisma = require("../lib/prisma");
 const { buildPagination } = require("../utils/pagination");
+const AppError = require("../errors/AppError");
+const ROLES = require("../constants/roles");
 
-exports.getAllProjects = async ({
+exports.getAllProjects = async ( user, {
     page,
     limit,
     status,
@@ -13,25 +16,47 @@ exports.getAllProjects = async ({
     order
 }) => {
     const skip = (page - 1) * limit;
-    const where = {
-    ...(status && { status }),
-    ...(ownerId && { ownerId }),
-    ...(search && {
-        OR: [
-            {
-                name: {
-                    contains: search,
-                    mode: "insensitive"
-                }
-            },
-            {
-            description: {
-                contains: search,
-                mode: "insensitive"
-            }
+
+    const authWhere = {};
+
+    if (user.role === ROLES.PROJECT_MANAGER) {
+       authWhere.ownerId = user.id;
+    } else if (user.role === ROLES.DEVELOPER) {
+       authWhere.tasks = {
+        some: {
+            assigneeId: user.id
         }
+        };
+    }
+
+    const queryWhere = {
+        ...(status && { status }),
+        ...(search && {
+            OR: [
+                {
+                    name: {
+                        contains: search,
+                        mode: "insensitive"
+                    }
+                },
+               {
+                    description: {
+                        contains: search,
+                        mode: "insensitive"
+                }
+            }
         ]
     })
+};
+
+    if (user.role === ROLES.ADMIN && ownerId) {
+    queryWhere.ownerId = ownerId;
+}
+
+
+const where = {
+    ...authWhere,
+    ...queryWhere
 };
 
     const orderBy = {
@@ -75,7 +100,26 @@ exports.getProjectById = async (id) => {
         }
     });
 }
+
 exports.createProject = async (data) => {
+    const owner = await prisma.user.findUnique({
+        where: {
+            id: data.ownerId
+        }
+    });
+
+    if (!owner) {
+        throw new AppError("Owner not found.", 404);
+    }
+
+    if (!owner.isActive) {
+        throw new AppError("Owner must be active.", 400);
+    }
+
+    if (owner.role !== ROLES.PROJECT_MANAGER) {
+        throw new AppError("Project owner must be a project manager.", 400);
+    }
+
     return prisma.project.create({
         data,
         select: projectSelect

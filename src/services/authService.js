@@ -1,18 +1,10 @@
 const prisma = require("../lib/prisma");
 const bcrypt = require("bcrypt");
 const {generateToken} = require("../utils/jwt");
+const AppError = require("../errors/AppError");
+
 
 exports.register = async (data) => {
-    const existingUser = await prisma.user.findUnique({
-        where: {
-            email: data.email
-        }
-    });
-
-    if (existingUser) {
-        throw new Error("Email already exists.");
-    }
-
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const user = await prisma.user.create({
@@ -44,7 +36,7 @@ exports.login = async (data) => {
     const passwordMatches = await bcrypt.compare(data.password, user.password);
 
     if (!passwordMatches) {
-        throw new Error("Invalid email or password.");
+        throw new AppError("Invalid email or password.", 401);
     }
 
     const token = generateToken(user);

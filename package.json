@@ -2,10 +2,14 @@
   "name": "project-management-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch",
+    "db:test:push": "dotenv -e .env.test -- prisma db push",
+    "db:test:migrate": "dotenv -e .env.test -- prisma migrate deploy"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
@@ -25,6 +29,10 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "dotenv": "^17.4.2",
+    "dotenv-cli": "^11.0.0",
+    "jest": "^30.4.2",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
   }
 }

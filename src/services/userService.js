@@ -4,6 +4,7 @@ const userWithRelationSelect = require("../constants/userWithRelationSelect")
 const projectSelect = require("../constants/projectSelect")
 const taskSelect = require("../constants/taskSelect")
 const { buildPagination } = require("../utils/pagination")
+const AppError = require("../errors/AppError")
 
 exports.getAllUsers = async ({
     page,
@@ -72,17 +73,35 @@ exports.getUserById = async (id) => {
 }
 
 exports.updateUser = async (id, updates) => {
-    return prisma.user.update({
-        where: {
-            id,
-            isActive: true
-        },
-        data: updates,
-        select: userSelect
-    });
+    const user = await prisma.user.findFirst({
+    where: {
+        id,
+        isActive: true
+    }
+});
+
+if (!user) {
+    throw new AppError("User not found.", 404);
+}
+
+return prisma.user.update({
+    where: {
+        id
+    },
+    data: updates,
+    select: userSelect
+});
 }
 
 exports.deactivateUser = async (id) => {
+     const user = await prisma.user.findUnique({
+        where: { id }
+    });
+
+    if (!user) {
+        throw new AppError("User not found.", 404);
+    }
+    
     return prisma.user.update({
         where: { id },
         data: {
@@ -93,6 +112,14 @@ exports.deactivateUser = async (id) => {
 }
 
 exports.activateUser = async (id) => {
+    const user = await prisma.user.findUnique({
+        where: { id }
+    });
+
+    if (!user) {
+        throw new AppError("User not found.", 404);
+    }
+
     return prisma.user.update({
         where: { id },
         data: {
@@ -100,4 +127,4 @@ exports.activateUser = async (id) => {
         },
         select: userSelect
     });
-}
+};

@@ -1,16 +1,19 @@
 const {Prisma} = require("@prisma/client");
 const { ZodError} = require("zod");
 const jwt = require("jsonwebtoken");
+const AppError = require("../errors/AppError")
 
 module.exports = (err, req, res, next) => {
-    console.error(err)
 
     // Prisma errors
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        const field = err.meta?.target?.[0];
+        const name = field.charAt(0).toUpperCase() + field.slice(1);
         switch (err.code) {
             case "P2002":
+                
                 return res.status(409).json({
-                    message: "A record with this value already exists."
+                    message: `${name} already exists.`
                 });
             case "P2003":
                 return res.status(400).json({
@@ -18,7 +21,7 @@ module.exports = (err, req, res, next) => {
                 });
             case "P2025":
                 return res.status(404).json({
-                    message: "Resource not found."
+                    message: `${name} not found.`
                 });
 
             default:
@@ -38,6 +41,13 @@ module.exports = (err, req, res, next) => {
         });
     }
 
+    // Application errors
+    if (err instanceof AppError) {
+        return res.status(err.statusCode).json({
+            message: err.message
+        });
+    }
+
     if (err instanceof jwt.JsonWebTokenError) {
         return res.status(401).json({
             message: "Invalid token. Please log in again."
@@ -51,6 +61,10 @@ module.exports = (err, req, res, next) => {
     }
 
     // Fallback for unhandled errors
+    if (process.env.NODE_ENV !== "test") {
+    console.error(err);
+    }
+    
     res.status(500).json({
         message: "Something went wrong. Please try again later."
     })
