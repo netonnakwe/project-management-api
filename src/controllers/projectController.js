@@ -9,19 +9,13 @@ exports.getProjects = asyncHandler(async (req, res) => {
 
 exports.getSingleProject = asyncHandler(async (req, res) => {
 
-    const project = await projectService.getProjectById(req.id);
-
-    if (!project) {
-        return res.status(404).json({
-            message: "Project not found"
-        });
-    }
+    const project = await projectService.getProjectById(req.id, req.user);
 
     res.status(200).json(project);
 });
 
 exports.updateProject = asyncHandler(async (req, res) => {
-    const project = await projectService.updateProject(req.id, req.body);
+    const project = await projectService.updateProject(req.user, req.id, req.body);
 
     res.status(200).json(project);
 });

@@ -76,7 +76,7 @@ router.get("/", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER, ROLES.DEVELOPER), 
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
-router.get("/:id", authorize(ROLES.ADMIN, ROLES.PROJECT_MANAGER, ROLES.DEVELOPER), validateId, projectController.getSingleProject);
+router.get("/:id", validateId, projectController.getSingleProject);
 
 /**
  * @swagger

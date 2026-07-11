@@ -39,6 +39,8 @@ model Project {
   owner        User     @relation("ProjectOwner", fields: [ownerId], references: [id])
 
   tasks        Task[]
+  isArchived  Boolean @default(false)
+  archivedAt  DateTime?
 }
 
 model Task {
