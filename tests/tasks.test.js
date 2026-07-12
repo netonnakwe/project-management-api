@@ -158,6 +158,7 @@ describe("Tasks", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({
             title: "Implement authentication",
+            description: "Build the JWT authentication flow.",
             projectId: 999999,
             assigneeId: developer.id
         });
@@ -168,125 +169,131 @@ describe("Tasks", () => {
         });
 
         it("should reject an archived project", async () => {
-    const project = await createArchivedProject();
-    const developer = await createDeveloper();
+            const project = await createArchivedProject();
+            const developer = await createDeveloper();
 
-    const { token } = await authenticate({
-        role: ROLES.ADMIN
-    });
+            const { token } = await authenticate({
+                role: ROLES.ADMIN
+            });
 
-    const response = await request(app)
-        .post("/tasks")
-        .set("Authorization", `Bearer ${token}`)
-        .send({
-            title: "Implement authentication",
-            projectId: project.id,
-            assigneeId: developer.id
-        });
+            const response = await request(app)
+                .post("/tasks")
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    title: "Implement authentication",
+                    description: "Build the JWT authentication flow.",
+                    projectId: project.id,
+                    assigneeId: developer.id
+                });
 
-    expect(response.status).toBe(400);
+            console.log(response.body)
+            expect(response.status).toBe(400);
 
-    expect(response.body.message).toBe(
-        "Cannot add tasks to an archived project."
-    );
+            expect(response.body.message).toBe(
+                "Cannot add tasks to an archived project."
+            );
         });
 
         it("should reject a non-existent assignee", async () => {
-    const project = await createProject();
+            const project = await createProject();
 
-    const { token } = await authenticate({
-        role: ROLES.ADMIN
-    });
+            const { token } = await authenticate({
+                role: ROLES.ADMIN
+            });
 
-    const response = await request(app)
-        .post("/tasks")
-        .set("Authorization", `Bearer ${token}`)
-        .send({
-            title: "Implement authentication",
-            projectId: project.id,
-            assigneeId: 999999
-        });
+            const response = await request(app)
+                .post("/tasks")
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    title: "Implement authentication",
+                    description: "Build the JWT authentication flow.",
+                    projectId: project.id,
+                    assigneeId: 999999
+                });
 
-    expect(response.status).toBe(404);
+            expect(response.status).toBe(404);
 
-    expect(response.body.message).toBe("Assignee not found.");
+            expect(response.body.message).toBe("Assignee not found.");
         });
 
         it("should reject an inactive assignee", async () => {
-    const project = await createProject();
+            const project = await createProject();
 
-    const developer = await createDeveloper({
-        isActive: false
-    });
+            const developer = await createDeveloper({
+                isActive: false
+            });
 
-    const { token } = await authenticate({
-        role: ROLES.ADMIN
-    });
+            const { token } = await authenticate({
+                role: ROLES.ADMIN
+            });
 
-    const response = await request(app)
-        .post("/tasks")
-        .set("Authorization", `Bearer ${token}`)
-        .send({
-            title: "Implement authentication",
-            projectId: project.id,
-            assigneeId: developer.id
-        });
+            const response = await request(app)
+                .post("/tasks")
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    title: "Implement authentication",
+                    description: "Build the JWT authentication flow.",
+                    projectId: project.id,
+                    assigneeId: developer.id
+                });
 
-    expect(response.status).toBe(400);
+            expect(response.status).toBe(400);
 
-    expect(response.body.message).toBe(
-        "Assignee account is inactive."
-    );
+            expect(response.body.message).toBe(
+                "Assignee account is inactive."
+            );
         });
 
         it("should reject assigning a project manager", async () => {
-    const project = await createProject();
+            const project = await createProject();
 
-    const manager = await createProjectManager();
+            const manager = await createProjectManager();
 
-    const { token } = await authenticate({
-        role: ROLES.ADMIN
-    });
+            const { token } = await authenticate({
+                role: ROLES.ADMIN
+            });
 
-    const response = await request(app)
-        .post("/tasks")
-        .set("Authorization", `Bearer ${token}`)
-        .send({
-            title: "Implement authentication",
-            projectId: project.id,
-            assigneeId: manager.id
-        });
+            const response = await request(app)
+                .post("/tasks")
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    title: "Implement authentication",
+                    description: "Build the JWT authentication flow.",
+                    projectId: project.id,
+                    assigneeId: manager.id
+                });
 
-    expect(response.status).toBe(400);
+            expect(response.status).toBe(400);
 
-    expect(response.body.message).toBe(
-        "Task assignee must be a developer."
-    );
+            expect(response.body.message).toBe(
+                "Task assignee must be a developer."
+            );
         });
 
         it("should reject assigning a admin", async () => {
-    const project = await createProject();
+            const project = await createProject();
 
-    const admin = await createAdmin();
+            const admin = await createAdmin();
 
-    const { token } = await authenticate({
-        role: ROLES.ADMIN
-    });
+            const { token } = await authenticate({
+                role: ROLES.ADMIN
+            });
 
-    const response = await request(app)
-        .post("/tasks")
-        .set("Authorization", `Bearer ${token}`)
-        .send({
-            title: "Implement authentication",
-            projectId: project.id,
-            assigneeId: admin.id
-        });
+            const response = await request(app)
+                .post("/tasks")
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    title: "Implement authentication",
+                    description: "Build the JWT authentication flow.",
+                    projectId: project.id,
+                    assigneeId: admin.id
+                });
 
-    expect(response.status).toBe(400);
+            expect(response.status).toBe(400);
 
-    expect(response.body.message).toBe(
-        "Task assignee must be a developer."
-    );
+            expect(response.body.message).toBe(
+                "Task assignee must be a developer."
+            );
         });
 
         it("should allow a project manager to create a task in their own project", async () => {

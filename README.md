@@ -202,7 +202,7 @@ npm start
 The API will be available at:
 
 ```text
-http://localhost:3000
+http://localhost:8080
 ```
 
 ---
