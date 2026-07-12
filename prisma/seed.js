@@ -16,7 +16,7 @@ async function main() {
 
     // Create users
     const [admin, manager, developer] = await prisma.$transaction([
-    prisma.user.create({
+    prisma.user.upsert({
         data: {
             firstName: "Neto",
             lastName: "Nnakwe",
@@ -25,7 +25,7 @@ async function main() {
             role: UserRole.ADMIN
         }
     }),
-    prisma.user.create({
+    prisma.user.upsert({
         data: {
             firstName: "Jane",
             lastName: "Manager",
@@ -34,7 +34,7 @@ async function main() {
             role: UserRole.PROJECT_MANAGER
         }
     }),
-    prisma.user.create({
+    prisma.user.upsert({
         data: {
             firstName: "John",
             lastName: "Developer",
@@ -46,7 +46,7 @@ async function main() {
 ]);
 
     // Create project
-    const project = await prisma.project.create({
+    const project = await prisma.project.upsert({
         data: {
             name: "Project Management API",
             description: "Learning Prisma + Express",
