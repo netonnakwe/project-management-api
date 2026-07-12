@@ -120,6 +120,11 @@ project-management-api/
 
 # Getting Started
 
+## Important Links
+
+* Live API URL: https://project-management-api-b38m.onrender.com
+* Swagger URL: https://project-management-api-b38m.onrender.com/api-docs/#/
+
 ## Prerequisites
 
 * Node.js 20+
