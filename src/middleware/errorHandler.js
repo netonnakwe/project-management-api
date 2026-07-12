@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const AppError = require("../errors/AppError")
 
 module.exports = (err, req, res, next) => {
+    console.error(err)
 
     // Prisma errors
     if (err instanceof Prisma.PrismaClientKnownRequestError) {

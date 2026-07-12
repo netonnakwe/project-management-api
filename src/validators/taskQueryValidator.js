@@ -1,30 +1,56 @@
 const { z } = require("zod");
 const { paginationSchema } = require("./paginationValidator");
+const TASK_STATUS = require("../constants/taskStatus");
+const TASK_PRIORITY = require("../constants/taskPriority");
 
 const taskQuerySchema = paginationSchema.extend({
-    completed: z
-        .enum(["true", "false"])
-        .transform(value => value === "true")
+    status: z
+        .enum(Object.values(TASK_STATUS))
         .optional(),
 
-    projectId: z.coerce.number().int().positive().optional(),
-    assigneeId: z.coerce.number().int().positive().optional(),
+    priority: z
+        .enum(Object.values(TASK_PRIORITY))
+        .optional(),
 
-    search: z.string().trim().min(1).optional(),
+    projectId: z
+        .coerce
+        .number()
+        .int()
+        .positive()
+        .optional(),
+
+    assigneeId: z
+        .coerce
+        .number()
+        .int()
+        .positive()
+        .optional(),
+
+    search: z
+        .string()
+        .trim()
+        .min(1)
+        .optional(),
 
     sortBy: z
-    .enum([
-        "title",
-        "completed",
-        "createdAt",
-        "updatedAt"
-    ])
-    .default("createdAt"),
+        .enum([
+            "title",
+            "status",
+            "priority",
+            "dueDate",
+            "createdAt",
+            "updatedAt"
+        ])
+        .default("createdAt"),
 
-order: z
-    .enum(["asc", "desc"])
-    .default("desc")
+    order: z
+        .enum(["asc", "desc"])
+        .default("desc")
 });
+
+module.exports = {
+    taskQuerySchema
+};
 
 module.exports = {
     taskQuerySchema

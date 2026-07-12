@@ -139,7 +139,7 @@ exports.getAllProjects = async (
         },
       },
     }),
-    prisma.project.count(),
+    prisma.project.count({where}),
   ]);
 
   return {
