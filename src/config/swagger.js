@@ -35,7 +35,7 @@ const options = {
 
         servers: [
             {
-                url: "http://localhost:8080"
+                url: process.env.API_URL || "http://localhost:8080",
             }
         ],
 
@@ -60,7 +60,8 @@ const options = {
     },
 
     apis: [
-        "./src/routes/*.js"
+        "./src/routes/*.js",
+        "./src/routes/**/*.js",
     ]
 };
 
