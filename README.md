@@ -400,5 +400,3 @@ Typical deployment steps:
 
 This project is licensed under the MIT License.
 
-A good next step is to add **Swagger/OpenAPI** documentation so the README can link directly to interactive API docs once the application is deployed.
-
